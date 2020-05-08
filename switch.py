@@ -30,10 +30,12 @@ _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_platform(hass, config, async_add_entities, discovery_info):
+    # In discovery info I have the client ID
     """Set up the sensors."""
-    topic = hass.data[MAIN_DOMAIN]['topic']
-    outbox_information = hass.data[MAIN_DOMAIN]['outbox_information']
-    client_name = hass.data[MAIN_DOMAIN]['client_name']
+    device_index = discovery_info
+    topic = hass.data[MAIN_DOMAIN][device_index]['topic']
+    outbox_information = hass.data[MAIN_DOMAIN][device_index]['outbox_information']
+    client_name = hass.data[MAIN_DOMAIN][device_index]['client_name']
     async_add_entities([MqttSwitch(hass, config, topic, info, client_name)
                         for info in outbox_information])
 
@@ -49,7 +51,8 @@ class MqttSwitch(
         self.outbox_info = outbox_info
         self.topic = topic+outbox_info['name']
         self._name = outbox_info['sensor_label']
-        self.entity_id = MAIN_DOMAIN + '.' + client_name.lower() + '_' + outbox_info['id']
+        self.entity_id = MAIN_DOMAIN + '.' + client_name.lower() + '_' + \
+            outbox_info['id']
         self.mqtt = hass.components.mqtt
         self._state = None
         self._state_on = False

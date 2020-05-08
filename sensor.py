@@ -28,24 +28,28 @@ _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_platform(hass, config, async_add_entities, discovery_info):
+    # In discovery info I have the client ID
     """Set up the sensors."""
-    topic = hass.data[MAIN_DOMAIN]['topic']
-    inbox_information = hass.data[MAIN_DOMAIN]['inbox_information']
-    client_name = hass.data[MAIN_DOMAIN]['client_name']
-    async_add_entities([MqttSensor(hass, config, topic, info, client_name)
+    client_index = discovery_info
+    topic = hass.data[MAIN_DOMAIN][client_index]['topic']
+    inbox_information = hass.data[MAIN_DOMAIN][client_index]['inbox_information']
+    client_name = hass.data[MAIN_DOMAIN][client_index]['client_name']
+    async_add_entities([MqttSensor(hass, config, topic, info, client_index, client_name)
                         for info in inbox_information])
 
 
 class MqttSensor(RestoreEntity):
 
-    def __init__(self, hass, config, topic, inbox_info, client_name):
+    def __init__(self, hass, config, topic, inbox_info, client_index, client_name):
         """Initialize the sensor."""
         self._config = config
+        self.client_index = client_index
         self.client_name = client_name
         self.inbox_info = inbox_info
         self.topic = topic+inbox_info['name']
         self._name = inbox_info['sensor_label']
-        self.entity_id = MAIN_DOMAIN + '.' + client_name.lower() + '_' + inbox_info['id']
+        self.entity_id = MAIN_DOMAIN + '.' + client_name.lower() + '_' + \
+            inbox_info['id']
         self._unit_of_measurement = inbox_info['unity']
         self.mqtt = hass.components.mqtt
         self.value = None
@@ -61,15 +65,16 @@ class MqttSensor(RestoreEntity):
     def icon(self):
         icon = self.inbox_info['icon']
         # If I have this info in the icon then I am in the topic where I recive the OS
-        if('$OPERATING_SYSTEM' in icon): # CHange the icon with the OS customized icon
-            new_icon = 'collage' # Default if OS not known
-            if(self.state=='Windows'):
-                new_icon='microsoft-windows'
-            elif(self.state=='Linux'):
-                new_icon='penguin'
-            elif(self.state=='macOS'):
-                new_icon='apple'
-            icon=icon.replace('$OPERATING_SYSTEM',new_icon) # Set the icon name
+        if('$OPERATING_SYSTEM' in icon):  # CHange the icon with the OS customized icon
+            new_icon = 'collage'  # Default if OS not known
+            if(self.state == 'Windows'):
+                new_icon = 'microsoft-windows'
+            elif(self.state == 'Linux'):
+                new_icon = 'penguin'
+            elif(self.state == 'macOS'):
+                new_icon = 'apple'
+            icon = icon.replace('$OPERATING_SYSTEM',
+                                new_icon)  # Set the icon name
         return icon
 
     @property
@@ -112,7 +117,7 @@ class MqttSensor(RestoreEntity):
             self.async_write_ha_state()
             # If message is last-time, save it to pass to the monitor state binary sensor
             if self.inbox_info['name'] == 'message_time':
-                self.hass.data[MAIN_DOMAIN]['last_message_time'] = payload
+                self.hass.data[MAIN_DOMAIN][self.client_index]['last_message_time'] = payload
 
         self._sub_state = await subscription.async_subscribe_topics(
             self.hass,

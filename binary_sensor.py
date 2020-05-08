@@ -34,23 +34,26 @@ _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_platform(hass, config, async_add_entities, discovery_info):
+    # In discovery info I have the client ID
     """Set up the sensors."""
-    topic = hass.data[MAIN_DOMAIN]['topic']
-    inbox_information = hass.data[MAIN_DOMAIN]['inbox_information']
-    client_name = hass.data[MAIN_DOMAIN]['client_name']
+    client_index = discovery_info
+    topic = hass.data[MAIN_DOMAIN][client_index]['topic']
+    inbox_information = hass.data[MAIN_DOMAIN][client_index]['inbox_information']
+    client_name = hass.data[MAIN_DOMAIN][client_index]['client_name']
     async_add_entities(
-        [MqttSensor(hass, config, topic, inbox_information, client_name)])
+        [MqttSensor(hass, config, topic, inbox_information, client_index, client_name)])
 
 """This sensor checks if the client is sending (with last_message time) and reports the computer state"""
 
 
 class MqttSensor(BinarySensorDevice, RestoreEntity):
 
-    def __init__(self, hass, config, topic, inbox_information, client_name):
+    def __init__(self, hass, config, topic, inbox_information, client_index, client_name):
         """Initialize the sensor."""
         self.hass = hass
         self._config = config
         self.on_icon = 'mdi:lightbulb-on'
+        self.client_index = client_index
         self.off_icon = 'mdi:lightbulb-off'
         self.client_name = client_name
         self._name = "State"
@@ -81,7 +84,8 @@ class MqttSensor(BinarySensorDevice, RestoreEntity):
 
     def update(self):
         """ Manage power by last message time """
-        last_message_time = self.hass.data[MAIN_DOMAIN]['last_message_time']  # It's like 2020-05-08 11:01:01
+        last_message_time = self.hass.data[MAIN_DOMAIN][self.client_index][
+            'last_message_time']  # It's like 2020-05-08 11:01:01
         if(last_message_time != None):
             # Parse time format
             last_message_time = datetime.datetime.strptime(
@@ -92,4 +96,3 @@ class MqttSensor(BinarySensorDevice, RestoreEntity):
                 self.power = True  # Is sending messages
         else:
             self.power = False  # Mqtt never received information
-
