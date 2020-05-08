@@ -20,8 +20,8 @@ from homeassistant.components.mqtt import (
 
 DEPENDENCIES = ["mqtt"]
 
-MAIN_DOMAIN = "monitor-mqtt"
-DOMAIN ="monitor-mqtt-sensor"
+MAIN_DOMAIN = "monitor_mqtt"
+DOMAIN = "monitor_mqtt_sensor"
 DATA_UPDATED = f"{DOMAIN}_data_updated"
 
 _LOGGER = logging.getLogger(__name__)
@@ -30,35 +30,52 @@ _LOGGER = logging.getLogger(__name__)
 async def async_setup_platform(hass, config, async_add_entities, discovery_info):
     """Set up the sensors."""
     topic = hass.data[MAIN_DOMAIN]['topic']
-    arguments = hass.data[MAIN_DOMAIN]['arguments']
-    async_add_entities([MqttSensor(hass, config, topic, argument) for argument in arguments])
+    inbox_information = hass.data[MAIN_DOMAIN]['inbox_information']
+    client_name = hass.data[MAIN_DOMAIN]['client_name']
+    async_add_entities([MqttSensor(hass, config, topic, info, client_name)
+                        for info in inbox_information])
 
 
 class MqttSensor(RestoreEntity):
-    """Implementation of a speedtest.net sensor."""
 
-    def __init__(self, hass,config, topic, argument):
+    def __init__(self, hass, config, topic, inbox_info, client_name):
         """Initialize the sensor."""
-        self._config=config
-        self.info = argument
-        self.topic=topic+argument['name']
-        self._name = argument['sensor_label']
-        self.entity_id = 'monitor.' + argument['name']
-        self._unit_of_measurement = argument['unity']
+        self._config = config
+        self.client_name = client_name
+        self.inbox_info = inbox_info
+        self.topic = topic+inbox_info['name']
+        self._name = inbox_info['sensor_label']
+        self.entity_id = MAIN_DOMAIN + '.' + client_name.lower() + '_' + inbox_info['id']
+        self._unit_of_measurement = inbox_info['unity']
         self.mqtt = hass.components.mqtt
         self.value = None
-        self._state = None 
-        self._sub_state=None
+        self._state = None
+        self._sub_state = None
 
     @property
     def name(self):
         """Return the name of the sensor."""
-        return '{} {}'.format('Monitor: ', self._name)
+        return self._name
+
+    @property
+    def icon(self):
+        icon = self.inbox_info['icon']
+        # If I have this info in the icon then I am in the topic where I recive the OS
+        if('$OPERATING_SYSTEM' in icon): # CHange the icon with the OS customized icon
+            new_icon = 'collage' # Default if OS not known
+            if(self.state=='Windows'):
+                new_icon='microsoft-windows'
+            elif(self.state=='Linux'):
+                new_icon='penguin'
+            elif(self.state=='macOS'):
+                new_icon='apple'
+            icon=icon.replace('$OPERATING_SYSTEM',new_icon) # Set the icon name
+        return icon
 
     @property
     def _entity_id(self):
         """Return the name of the sensor."""
-        return self._entity_id
+        return self.entity_id
 
     @property
     def state(self):
@@ -72,30 +89,30 @@ class MqttSensor(RestoreEntity):
 
     def update(self):
         """Value is auto-updated from mqtt callback"""
-        self._state=self.value
+        self._state = self.value
 
     async def async_added_to_hass(self):
         """Subscribe to MQTT events."""
         await super().async_added_to_hass()
         await self._subscribe_topics()
-    
 
     @callback
     def _schedule_immediate_update(self):
         self.async_schedule_update_ha_state(True)
 
-    
     async def _subscribe_topics(self):
         """(Re)Subscribe to topics."""
-        print(self.topic)
+        # print(self.topic)
         @callback
-        #@log_messages(self.hass, self._entity_id)
+        # @log_messages(self.hass, self._entity_id)
         def message_received(msg):
             """Handle new MQTT messages."""
             payload = msg.payload
-
             self.value = payload
             self.async_write_ha_state()
+            # If message is last-time, save it to pass to the monitor state binary sensor
+            if self.inbox_info['name'] == 'message_time':
+                self.hass.data[MAIN_DOMAIN]['last_message_time'] = payload
 
         self._sub_state = await subscription.async_subscribe_topics(
             self.hass,
@@ -104,7 +121,7 @@ class MqttSensor(RestoreEntity):
                 "state_topic": {
                     "topic": self.topic,
                     "msg_callback": message_received,
-                    "qos":0,# self._config[CONF_QOS],
+                    "qos": 0,  # self._config[CONF_QOS],
                 }
             },
         )
