@@ -4,6 +4,8 @@ import re
 import sys
 from subprocess import check_output, CalledProcessError
 
+from copy import deepcopy
+
 import voluptuous as vol
 
 import homeassistant.loader as loader
@@ -51,14 +53,24 @@ CONFIG_SCHEMA = vol.Schema(
 )
 
 
-inbox_information = [{'id': 'ram', 'name': 'ram_used_percentage', 'sensor_label': 'Ram used percentage', 'unity': '%', 'icon': 'mdi:memory'},
+inbox_information = [{'id': 'ram', 'name': 'ram_used_percentage', 'sensor_label': 'Ram used percentage', 'unity': '%', 'icon': 'mdi:memory', 'value': None},
                      {'id': 'cpu', 'name': 'cpu_used_percentage',
-                      'sensor_label': 'CPU used percentage', 'unity': '%', 'icon': 'mdi:calculator-variant'},
+                      'sensor_label': 'CPU used percentage', 'unity': '%', 'icon': 'mdi:calculator-variant', 'value': None},
                      {'id': 'disk', 'name': 'disk_used_percentage',
-                      'sensor_label': 'Disk used percentage', 'unity': '%', 'icon': 'mdi:harddisk'},
+                      'sensor_label': 'Disk used percentage', 'unity': '%', 'icon': 'mdi:harddisk', 'value': None},
                      {'id': 'os', 'name': 'operating_system',
-                      'sensor_label': 'Operating system', 'unity': '', 'icon': 'mdi:$OPERATING_SYSTEM'},
-                     {'id': 'time', 'name': 'message_time', 'sensor_label': 'Last update time', 'unity': '', 'icon': 'mdi:clock-outline'}]
+                      'sensor_label': 'Operating system', 'unity': '', 'icon': 'mdi:$OPERATING_SYSTEM', 'value': None},
+
+
+                     {'id': 'battery_level', 'name': 'battery_level_percentage',
+                      'sensor_label': 'Battery percentage', 'unity': '%', 'icon': 'mdi:battery', 'value': None},
+
+
+                     {'id': 'battery_charging', 'name': 'battery_charging',
+                      'sensor_label': 'Battery Charging', 'unity': '', 'icon': 'mdi:battery', 'value': None},
+
+
+                     {'id': 'time', 'name': 'message_time', 'sensor_label': 'Last update time', 'unity': '', 'icon': 'mdi:clock-outline', 'value': None}]
 
 
 outbox_information = [{'id': 'shutdown', 'name': 'shutdown_command', 'sensor_label': 'Shutdown', 'icon': 'mdi:power'},
@@ -79,7 +91,7 @@ async def async_setup(hass, config):
         topic = 'monitor/' + client_name + '/'
 
         # These hass.data will be passed to the sensors
-        hass.data[DOMAIN].append({'client_name': client_name, 'topic': topic, 'inbox_information': inbox_information,
+        hass.data[DOMAIN].append({'client_name': client_name, 'topic': topic, 'inbox_information': deepcopy(inbox_information),
                                   'outbox_information': outbox_information, 'last_message_time': None})
 
         # Load the sensors - that receive and manage clients messages

@@ -1,6 +1,7 @@
 import logging
 import datetime
 
+from .funcs import GetOSicon
 from homeassistant.const import ATTR_ATTRIBUTION
 from homeassistant.core import callback
 from homeassistant.components.binary_sensor import BinarySensorDevice
@@ -22,6 +23,7 @@ from homeassistant.components.mqtt import (
 
 from homeassistant.const import STATE_OFF, STATE_ON
 
+OS_AS_STATE_ICON = True  # Use OS icon as state icon if device is on
 OFF_WAIT = 60  # If after X seconds, I don't receive a message, I set the binary sensor to OFF
 
 DEPENDENCIES = ["mqtt"]
@@ -52,9 +54,9 @@ class MqttSensor(BinarySensorDevice, RestoreEntity):
         """Initialize the sensor."""
         self.hass = hass
         self._config = config
-        self.on_icon = 'mdi:lightbulb-on'
+        self.on_icon = 'mdi:monitor-clean'
         self.client_index = client_index
-        self.off_icon = 'mdi:lightbulb-off'
+        self.off_icon = 'mdi:monitor-off'
         self.client_name = client_name
         self._name = "State"
         self.entity_id = MAIN_DOMAIN + '.' + client_name.lower() + '_state'
@@ -68,7 +70,16 @@ class MqttSensor(BinarySensorDevice, RestoreEntity):
     @property
     def icon(self):
         if self.is_on:
-            return self.on_icon
+            if OS_AS_STATE_ICON:  # If you want OS as icon -> get it from inbox values and set the proper icon
+                # print( self.hass.data[MAIN_DOMAIN][self.client_index]['inbox_information'])
+                for device in self.hass.data[MAIN_DOMAIN][self.client_index]['inbox_information']:
+                    if device['id'] == 'os':
+                        # It's like 2020-05-08 11:01:01
+                        return 'mdi:' + GetOSicon(device['value'])
+                return self.on_icon
+                # return 'mdi:'+GetOSicon()
+            else:
+                return self.on_icon
         else:
             return self.off_icon
 
@@ -84,8 +95,10 @@ class MqttSensor(BinarySensorDevice, RestoreEntity):
 
     def update(self):
         """ Manage power by last message time """
-        last_message_time = self.hass.data[MAIN_DOMAIN][self.client_index][
-            'last_message_time']  # It's like 2020-05-08 11:01:01
+        for device in self.hass.data[MAIN_DOMAIN][self.client_index]['inbox_information']:
+            if device['id'] == 'time':
+                # It's like 2020-05-08 11:01:01
+                last_message_time = device['value']
         if(last_message_time != None):
             # Parse time format
             last_message_time = datetime.datetime.strptime(

@@ -1,8 +1,9 @@
 import logging
 
+from .funcs import GetOSicon
 from homeassistant.const import ATTR_ATTRIBUTION
 from homeassistant.core import callback
-from homeassistant.helpers.dispatcher import async_dispatcher_connect
+from homeassistant.helpers.dispatcher import async_dispatcher_connect, dispatcher_send
 from homeassistant.helpers.restore_state import RestoreEntity
 from homeassistant.components.mqtt.debug_info import log_messages
 
@@ -18,7 +19,9 @@ from homeassistant.components.mqtt import (
     subscription,
 )
 
+
 DEPENDENCIES = ["mqtt"]
+
 
 MAIN_DOMAIN = "monitor_mqtt"
 DOMAIN = "monitor_mqtt_sensor"
@@ -66,15 +69,8 @@ class MqttSensor(RestoreEntity):
         icon = self.inbox_info['icon']
         # If I have this info in the icon then I am in the topic where I recive the OS
         if('$OPERATING_SYSTEM' in icon):  # CHange the icon with the OS customized icon
-            new_icon = 'collage'  # Default if OS not known
-            if(self.state == 'Windows'):
-                new_icon = 'microsoft-windows'
-            elif(self.state == 'Linux'):
-                new_icon = 'penguin'
-            elif(self.state == 'macOS'):
-                new_icon = 'apple'
-            icon = icon.replace('$OPERATING_SYSTEM',
-                                new_icon)  # Set the icon name
+            icon = icon.replace('$OPERATING_SYSTEM', GetOSicon(
+                self.state))  # Set the icon name
         return icon
 
     @property
@@ -101,6 +97,11 @@ class MqttSensor(RestoreEntity):
         await super().async_added_to_hass()
         await self._subscribe_topics()
 
+    def set_unavailable(self):
+        """Set state to UNAVAILABLE."""
+        self._is_available = False
+        self.async_write_ha_state()
+
     @callback
     def _schedule_immediate_update(self):
         self.async_schedule_update_ha_state(True)
@@ -113,11 +114,16 @@ class MqttSensor(RestoreEntity):
         def message_received(msg):
             """Handle new MQTT messages."""
             payload = msg.payload
+            # Save the new value
             self.value = payload
+            # Save also in the inbox-info list
+            self.inbox_info['value'] = payload
+
+            # Set to unavailable if paylod is 'None' (used for battery sensors)
+            if(payload == 'None'):
+                self.set_unavailable()
+
             self.async_write_ha_state()
-            # If message is last-time, save it to pass to the monitor state binary sensor
-            if self.inbox_info['name'] == 'message_time':
-                self.hass.data[MAIN_DOMAIN][self.client_index]['last_message_time'] = payload
 
         self._sub_state = await subscription.async_subscribe_topics(
             self.hass,
