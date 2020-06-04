@@ -1,0 +1,195 @@
+- cards:
+    - entities:
+        - entity: monitor_mqtt.pcsenzaschermo_state
+      show_header_toggle: false
+      title: 'Monitor: PcSenzaSchermo'
+      type: entities
+    - card:
+        cards:
+          - cards:
+              - entities:
+                  - entity: monitor_mqtt.pcsenzaschermo_disk
+                height: 500
+                hours_to_show: 1
+                line_color: '#84c4a1'
+                line_width: 7
+                lower_bound: 0
+                name: Disk Used
+                points_per_hour: 60
+                type: 'custom:mini-graph-card'
+                upper_bound: 100
+              - entities:
+                  - entity: monitor_mqtt.pcsenzaschermo_ram
+                height: 500
+                hours_to_show: 1
+                line_color: '#f2bb88'
+                line_width: 7
+                lower_bound: 0
+                name: RAM Used
+                points_per_hour: 60
+                type: 'custom:mini-graph-card'
+                upper_bound: 100
+              - entities:
+                  - entity: monitor_mqtt.pcsenzaschermo_cpu
+                height: 500
+                hours_to_show: 1
+                line_color: '#57c3d4'
+                line_width: 7
+                lower_bound: 0
+                name: CPU Used- cards:
+    - entities:
+        - entity: monitor_mqtt.pcname1_state
+      show_header_toggle: false
+      title: 'Monitor: PcSenzaSchermo'
+      type: entities
+    - card:
+        cards:
+          - cards:
+              - entities:
+                  - entity: monitor_mqtt.pcname1_disk
+                height: 500
+                hours_to_show: 1
+                line_color: '#84c4a1'
+                line_width: 7
+                lower_bound: 0
+                name: Disk Used
+                points_per_hour: 60
+                type: 'custom:mini-graph-card'
+                upper_bound: 100
+              - entities:
+                  - entity: monitor_mqtt.pcname1_ram
+                height: 500
+                hours_to_show: 1
+                line_color: '#f2bb88'
+                line_width: 7
+                lower_bound: 0
+                name: RAM Used
+                points_per_hour: 60
+                type: 'custom:mini-graph-card'
+                upper_bound: 100
+              - entities:
+                  - entity: monitor_mqtt.pcname1_cpu
+                height: 500
+                hours_to_show: 1
+                line_color: '#57c3d4'
+                line_width: 7
+                lower_bound: 0
+                name: CPU Used
+                points_per_hour: 60
+                type: 'custom:mini-graph-card'
+                upper_bound: 100
+            type: horizontal-stack
+          - cards:
+              - entities:
+                  - entity: monitor_mqtt.pcname1_battery_level
+                height: 333
+                hours_to_show: 1
+                line_color: '#009900'
+                line_width: 3
+                lower_bound: 0
+                name: Battery level
+                points_per_hour: 60
+                type: 'custom:mini-graph-card'
+                upper_bound: 100
+              - entities:
+                  - entity: monitor_mqtt.pcname1_cpu_temperature
+                height: 333
+                hours_to_show: 1
+                line_color: '#ff3333'
+                line_width: 3
+                lower_bound: 0
+                points_per_hour: 60
+                type: 'custom:mini-graph-card'
+                upper_bound: 100
+            type: horizontal-stack
+          - cards:
+              - entity: switch.pcname1_shutdown
+                hold_action:
+                  action: more-info
+                show_icon: true
+                show_name: true
+                tap_action:
+                  action: toggle
+                type: button
+              - entity: switch.pcname1_reboot
+                hold_action:
+                  action: more-info
+                show_icon: true
+                show_name: true
+                tap_action:
+                  action: toggle
+                type: button
+              - entity: switch.pcname1_lock
+                hold_action:
+                  action: more-info
+                show_icon: true
+                show_name: true
+                tap_action:
+                  action: toggle
+                type: button
+            type: horizontal-stack
+        type: vertical-stack
+      conditions:
+        - entity: monitor_mqtt.pcname1_state
+          state: 'on'
+      type: conditional
+  type: vertical-stack
+                points_per_hour: 60
+                type: 'custom:mini-graph-card'
+                upper_bound: 100
+            type: horizontal-stack
+          - cards:
+              - entities:
+                  - entity: monitor_mqtt.pcsenzaschermo_battery_level
+                height: 333
+                hours_to_show: 1
+                line_color: '#009900'
+                line_width: 3
+                lower_bound: 0
+                name: Battery level
+                points_per_hour: 60
+                type: 'custom:mini-graph-card'
+                upper_bound: 100
+              - entities:
+                  - entity: monitor_mqtt.pcsenzaschermo_cpu_temperature
+                height: 333
+                hours_to_show: 1
+                line_color: '#ff3333'
+                line_width: 3
+                lower_bound: 0
+                points_per_hour: 60
+                type: 'custom:mini-graph-card'
+                upper_bound: 100
+            type: horizontal-stack
+          - cards:
+              - entity: switch.pcsenzaschermo_shutdown
+                hold_action:
+                  action: more-info
+                show_icon: true
+                show_name: true
+                tap_action:
+                  action: toggle
+                type: button
+              - entity: switch.pcsenzaschermo_reboot
+                hold_action:
+                  action: more-info
+                show_icon: true
+                show_name: true
+                tap_action:
+                  action: toggle
+                type: button
+              - entity: switch.pcsenzaschermo_lock
+                hold_action:
+                  action: more-info
+                show_icon: true
+                show_name: true
+                tap_action:
+                  action: toggle
+                type: button
+            type: horizontal-stack
+        type: vertical-stack
+      conditions:
+        - entity: monitor_mqtt.pcsenzaschermo_state
+          state: 'on'
+      type: conditional
+  type: vertical-stack
