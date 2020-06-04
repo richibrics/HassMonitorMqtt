@@ -39,38 +39,33 @@ DEPENDENCIES = ["mqtt"]
 DOMAIN = "monitor_mqtt"
 
 CONF_CLIENT_NAME = "client_name"
-DEFAULT_CLIENT_NAME = "computer"
 
-CONFIG_SCHEMA = vol.Schema(
+MONITOR_MQTT_SCHEMA = vol.Schema(
     {
-        DOMAIN: vol.All(cv.ensure_list,
-                        [vol.Schema({
-                            vol.Required(CONF_CLIENT_NAME, default=DEFAULT_CLIENT_NAME): cv.string
-                        })]
-                        )
-    },
-    extra=vol.ALLOW_EXTRA,
+        vol.Required(CONF_CLIENT_NAME): cv.string,
+    }
 )
 
 
-inbox_information = [{'id': 'ram', 'name': 'ram_used_percentage', 'sensor_label': 'Ram used percentage', 'unity': '%', 'icon': 'mdi:memory', 'value': None},
+CONFIG_SCHEMA = vol.Schema(
+    {DOMAIN: vol.Schema(vol.All(cv.ensure_list, [MONITOR_MQTT_SCHEMA]))}, extra=vol.ALLOW_EXTRA
+)
+
+
+inbox_information = [{'id': 'ram', 'name': 'ram_used_percentage', 'sensor_label': 'Ram used percentage', 'unity': '%', 'icon': 'mdi:memory', 'device_class': None, 'value': None},
                      {'id': 'cpu', 'name': 'cpu_used_percentage',
-                      'sensor_label': 'CPU used percentage', 'unity': '%', 'icon': 'mdi:calculator-variant', 'value': None},
+                      'sensor_label': 'CPU used percentage', 'unity': '%', 'icon': 'mdi:calculator-variant', 'device_class': None, 'value': None},
                      {'id': 'disk', 'name': 'disk_used_percentage',
-                      'sensor_label': 'Disk used percentage', 'unity': '%', 'icon': 'mdi:harddisk', 'value': None},
+                      'sensor_label': 'Disk used percentage', 'unity': '%', 'icon': 'mdi:harddisk', 'device_class': None, 'value': None},
                      {'id': 'os', 'name': 'operating_system',
-                      'sensor_label': 'Operating system', 'unity': '', 'icon': 'mdi:$OPERATING_SYSTEM', 'value': None},
-
-
+                      'sensor_label': 'Operating system', 'unity': '', 'icon': 'mdi:$OPERATING_SYSTEM', 'device_class': None, 'value': None},
                      {'id': 'battery_level', 'name': 'battery_level_percentage',
-                      'sensor_label': 'Battery percentage', 'unity': '%', 'icon': 'mdi:battery', 'value': None},
-
-
+                      'sensor_label': 'Battery percentage', 'unity': '%', 'icon': 'mdi:battery', 'device_class': 'battery', 'value': None},
                      {'id': 'battery_charging', 'name': 'battery_charging',
-                      'sensor_label': 'Battery Charging', 'unity': '', 'icon': 'mdi:battery', 'value': None},
-
-
-                     {'id': 'time', 'name': 'message_time', 'sensor_label': 'Last update time', 'unity': '', 'icon': 'mdi:clock-outline', 'value': None}]
+                      'sensor_label': 'Battery charging', 'unity': '', 'icon': 'mdi:$PLUGGED', 'device_class': None, 'value': None},
+                     {'id': 'cpu_temperature', 'name': 'cpu_temperature',
+                      'sensor_label': 'CPU temperature', 'unity': '°C', 'icon': 'mdi:coolant-temperature', 'device_class': 'temperature', 'value': None},
+                     {'id': 'time', 'name': 'message_time', 'sensor_label': 'Last update time', 'unity': '', 'icon': 'mdi:clock-outline', 'device_class': None, 'value': None}]
 
 
 outbox_information = [{'id': 'shutdown', 'name': 'shutdown_command', 'sensor_label': 'Shutdown', 'icon': 'mdi:power'},
@@ -82,12 +77,10 @@ outbox_information = [{'id': 'shutdown', 'name': 'shutdown_command', 'sensor_lab
 
 
 async def async_setup(hass, config):
-    print(config.get(DOMAIN))
     hass.data[DOMAIN] = []
     # index is the number of client info to find them in the hass.data list
     for index, client in enumerate(config[DOMAIN]):
-        client_name = client.get(
-            CONF_CLIENT_NAME)
+        client_name = client[CONF_CLIENT_NAME]
         topic = 'monitor/' + client_name + '/'
 
         # These hass.data will be passed to the sensors
