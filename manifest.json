@@ -1,0 +1,8 @@
+{
+  "domain": "monitor-mqtt",
+  "name": "System Monitor MQTT",
+  "documentation": "https://github.com/richibrics/HassMonitorMqtt",
+  "requirements": [],
+  "dependencies": [],
+  "codeowners": ["@richibrics"]
+}
