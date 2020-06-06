@@ -43,12 +43,12 @@ CONF_CLIENT_NAME = "client_name"
 MONITOR_MQTT_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_CLIENT_NAME): cv.string,
-    }
+    }, extra=vol.ALLOW_EXTRA
 )
 
 
 CONFIG_SCHEMA = vol.Schema(
-    {DOMAIN: vol.Schema(vol.All(cv.ensure_list, [MONITOR_MQTT_SCHEMA]))}, extra=vol.ALLOW_EXTRA
+    {DOMAIN: vol.Schema(vol.All(cv.ensure_list, [MONITOR_MQTT_SCHEMA]), extra=vol.ALLOW_EXTRA)}, extra=vol.ALLOW_EXTRA
 )
 
 
@@ -77,14 +77,14 @@ outbox_information = [{'id': 'shutdown', 'name': 'shutdown_command', 'sensor_lab
 
 
 async def async_setup(hass, config):
-    hass.data[DOMAIN] = []
+    hass.data[DOMAIN] = {'data':[]}
     # index is the number of client info to find them in the hass.data list
     for index, client in enumerate(config[DOMAIN]):
         client_name = client[CONF_CLIENT_NAME]
         topic = 'monitor/' + client_name + '/'
 
         # These hass.data will be passed to the sensors
-        hass.data[DOMAIN].append({'client_name': client_name, 'topic': topic, 'inbox_information': deepcopy(inbox_information),
+        hass.data[DOMAIN]['data'].append({'client_name': client_name, 'topic': topic, 'inbox_information': deepcopy(inbox_information),
                                   'outbox_information': outbox_information, 'last_message_time': None})
 
         # Load the sensors - that receive and manage clients messages

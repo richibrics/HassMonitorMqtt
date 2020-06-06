@@ -36,9 +36,9 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info)
     # In discovery info I have the client ID
     """Set up the sensors."""
     client_index = discovery_info
-    topic = hass.data[MAIN_DOMAIN][client_index]['topic']
-    inbox_information = hass.data[MAIN_DOMAIN][client_index]['inbox_information']
-    client_name = hass.data[MAIN_DOMAIN][client_index]['client_name']
+    topic = hass.data[MAIN_DOMAIN]['data'][client_index]['topic']
+    inbox_information = hass.data[MAIN_DOMAIN]['data'][client_index]['inbox_information']
+    client_name = hass.data[MAIN_DOMAIN]['data'][client_index]['client_name']
     async_add_entities([MqttSensor(hass, config, topic, info, client_index, client_name)
                         for info in inbox_information])
 

@@ -39,9 +39,9 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info)
     # In discovery info I have the client ID
     """Set up the sensors."""
     client_index = discovery_info
-    topic = hass.data[MAIN_DOMAIN][client_index]['topic']
-    inbox_information = hass.data[MAIN_DOMAIN][client_index]['inbox_information']
-    client_name = hass.data[MAIN_DOMAIN][client_index]['client_name']
+    topic = hass.data[MAIN_DOMAIN]['data'][client_index]['topic']
+    inbox_information = hass.data[MAIN_DOMAIN]['data'][client_index]['inbox_information']
+    client_name = hass.data[MAIN_DOMAIN]['data'][client_index]['client_name']
     async_add_entities(
         [MqttSensor(hass, config, topic, inbox_information, client_index, client_name)])
 
@@ -71,8 +71,8 @@ class MqttSensor(BinarySensorDevice, RestoreEntity):
     def icon(self):
         if self.is_on:
             if OS_AS_STATE_ICON:  # If you want OS as icon -> get it from inbox values and set the proper icon
-                # print( self.hass.data[MAIN_DOMAIN][self.client_index]['inbox_information'])
-                for device in self.hass.data[MAIN_DOMAIN][self.client_index]['inbox_information']:
+                # print( self.hass.data[MAIN_DOMAIN]['data'][self.client_index]['inbox_information'])
+                for device in self.hass.data[MAIN_DOMAIN]['data'][self.client_index]['inbox_information']:
                     if device['id'] == 'os':
                         # It's like 2020-05-08 11:01:01
                         return 'mdi:' + GetOSicon(device['value'])
@@ -95,7 +95,7 @@ class MqttSensor(BinarySensorDevice, RestoreEntity):
 
     def update(self):
         """ Manage power by last message time """
-        for device in self.hass.data[MAIN_DOMAIN][self.client_index]['inbox_information']:
+        for device in self.hass.data[MAIN_DOMAIN]['data'][self.client_index]['inbox_information']:
             if device['id'] == 'time':
                 # It's like 2020-05-08 11:01:01
                 last_message_time = device['value']
