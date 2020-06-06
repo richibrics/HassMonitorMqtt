@@ -38,6 +38,7 @@ DEPENDENCIES = ["mqtt"]
 # The domain of your component. Should be equal to the name of your component.
 DOMAIN = "monitor_mqtt"
 
+CONF_LIST_KEY='monitor_list'
 CONF_CLIENT_NAME = "client_name"
 
 MONITOR_MQTT_SCHEMA = vol.Schema(
@@ -47,9 +48,12 @@ MONITOR_MQTT_SCHEMA = vol.Schema(
 )
 
 
-CONFIG_SCHEMA = vol.Schema(
-    {DOMAIN: vol.Schema(vol.All(cv.ensure_list, [MONITOR_MQTT_SCHEMA]), extra=vol.ALLOW_EXTRA)}, extra=vol.ALLOW_EXTRA
-)
+CONFIG_SCHEMA = vol.Schema({
+    DOMAIN: {
+        CONF_LIST_KEY:
+            vol.All(cv.ensure_list, [MONITOR_MQTT_SCHEMA])
+            }
+    }, extra=vol.ALLOW_EXTRA)
 
 
 inbox_information = [{'id': 'ram', 'name': 'ram_used_percentage', 'sensor_label': 'Ram used percentage', 'unity': '%', 'icon': 'mdi:memory', 'device_class': None, 'value': None},
@@ -79,7 +83,7 @@ outbox_information = [{'id': 'shutdown', 'name': 'shutdown_command', 'sensor_lab
 async def async_setup(hass, config):
     hass.data[DOMAIN] = {'data':[]}
     # index is the number of client info to find them in the hass.data list
-    for index, client in enumerate(config[DOMAIN]):
+    for index, client in enumerate(config[DOMAIN][CONF_LIST_KEY]):
         client_name = client[CONF_CLIENT_NAME]
         topic = 'monitor/' + client_name + '/'
 
