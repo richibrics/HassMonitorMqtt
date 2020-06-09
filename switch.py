@@ -50,7 +50,7 @@ class MqttSwitch(
         self._config = config
         self.outbox_info = outbox_info
         self.topic = topic+outbox_info['name']
-        self._name = outbox_info['sensor_label']
+        self._name = client_name + ' - ' + outbox_info['sensor_label']
         self.entity_id = MAIN_DOMAIN + '.' + client_name.lower() + '_' + \
             outbox_info['id']
         self.mqtt = hass.components.mqtt

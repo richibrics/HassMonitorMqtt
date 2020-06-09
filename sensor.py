@@ -52,8 +52,8 @@ class MqttSensor(RestoreEntity):
         self.client_name = client_name
         self.inbox_info = inbox_info
         self.topic = topic+inbox_info['name']
-        self._name = inbox_info['sensor_label']
-        self.hass=hass
+        self._name = client_name + ' - ' + inbox_info['sensor_label']
+        self.hass = hass
         self.entity_id = MAIN_DOMAIN + '.' + client_name.lower() + '_' + \
             inbox_info['id']
         self._unit_of_measurement = inbox_info['unity']
@@ -145,18 +145,18 @@ class MqttSensor(RestoreEntity):
                 if 'cpu_temperature' in self._entity_id and len(payload) > 0:
                     # Then make an average of the cores temperatures
                     # convert json to list
-                    temps=json.loads(payload)
-                    temp=sum(temps)/len(temps)
-                    self.value=temp
+                    temps = json.loads(payload)
+                    temp = sum(temps)/len(temps)
+                    self.value = temp
             except:
                 pass
 
             # Save also in the inbox-info list
-            self.inbox_info['value']=self.value
+            self.inbox_info['value'] = self.value
 
             self.async_write_ha_state()
 
-        self._sub_state=await subscription.async_subscribe_topics(
+        self._sub_state = await subscription.async_subscribe_topics(
             self.hass,
             self._sub_state,
             {

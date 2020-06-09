@@ -12,6 +12,7 @@ import homeassistant.loader as loader
 from homeassistant.components.sensor import DOMAIN as SENSOR_DOMAIN
 from homeassistant.components.binary_sensor import DOMAIN as BINARY_SENSOR_DOMAIN
 from homeassistant.components.switch import DOMAIN as SWITCH_DOMAIN
+from homeassistant.components.camera import DOMAIN as CAMERA_DOMAIN
 import homeassistant.util.dt as dt_util
 import homeassistant.helpers.config_validation as cv
 from homeassistant.components import recorder
@@ -38,7 +39,7 @@ DEPENDENCIES = ["mqtt"]
 # The domain of your component. Should be equal to the name of your component.
 DOMAIN = "monitor_mqtt"
 
-CONF_LIST_KEY='monitor_list'
+CONF_LIST_KEY = 'monitor_list'
 CONF_CLIENT_NAME = "client_name"
 
 MONITOR_MQTT_SCHEMA = vol.Schema(
@@ -52,8 +53,8 @@ CONFIG_SCHEMA = vol.Schema({
     DOMAIN: {
         CONF_LIST_KEY:
             vol.All(cv.ensure_list, [MONITOR_MQTT_SCHEMA])
-            }
-    }, extra=vol.ALLOW_EXTRA)
+    }
+}, extra=vol.ALLOW_EXTRA)
 
 
 inbox_information = [{'id': 'ram', 'name': 'ram_used_percentage', 'sensor_label': 'Ram used percentage', 'unity': '%', 'icon': 'mdi:memory', 'device_class': None, 'value': None},
@@ -79,9 +80,12 @@ outbox_information = [{'id': 'shutdown', 'name': 'shutdown_command', 'sensor_lab
                        'sensor_label': 'Lock', 'icon': 'mdi:lock'}
                       ]
 
+camera_information = {'id': 'screen', 'name': 'screenshot',
+                      'camera_label': 'Screen', 'icon':  'mdi:monitor-clean'}
+
 
 async def async_setup(hass, config):
-    hass.data[DOMAIN] = {'data':[]}
+    hass.data[DOMAIN] = {'data': []}
     # index is the number of client info to find them in the hass.data list
     for index, client in enumerate(config[DOMAIN][CONF_LIST_KEY]):
         client_name = client[CONF_CLIENT_NAME]
@@ -89,7 +93,7 @@ async def async_setup(hass, config):
 
         # These hass.data will be passed to the sensors
         hass.data[DOMAIN]['data'].append({'client_name': client_name, 'topic': topic, 'inbox_information': deepcopy(inbox_information),
-                                  'outbox_information': outbox_information, 'last_message_time': None})
+                                          'outbox_information': outbox_information, 'camera_information': camera_information, 'last_message_time': None})
 
         # Load the sensors - that receive and manage clients messages
         hass.async_create_task(
@@ -108,6 +112,12 @@ async def async_setup(hass, config):
         hass.async_create_task(
             async_load_platform(
                 hass, BINARY_SENSOR_DOMAIN, DOMAIN, index,  config
+            )
+        )
+
+        hass.async_create_task(
+            async_load_platform(
+                hass, CAMERA_DOMAIN, DOMAIN, index,  config
             )
         )
 

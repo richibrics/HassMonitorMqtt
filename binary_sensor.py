@@ -58,7 +58,7 @@ class MqttSensor(BinarySensorDevice, RestoreEntity):
         self.client_index = client_index
         self.off_icon = 'mdi:monitor-off'
         self.client_name = client_name
-        self._name = "State"
+        self._name = client_name + ' - ' + "State"
         self.entity_id = MAIN_DOMAIN + '.' + client_name.lower() + '_state'
         self.power = False
 
