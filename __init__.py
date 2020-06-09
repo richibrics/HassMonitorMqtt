@@ -16,7 +16,6 @@ from homeassistant.components.camera import DOMAIN as CAMERA_DOMAIN
 import homeassistant.util.dt as dt_util
 import homeassistant.helpers.config_validation as cv
 from homeassistant.components import recorder
-from homeassistant.components.sensor import (DOMAIN, PLATFORM_SCHEMA)
 from homeassistant.helpers.entity import Entity
 from homeassistant.core import callback
 from homeassistant.helpers.discovery import async_load_platform
