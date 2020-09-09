@@ -61,4 +61,5 @@ where PcName1 and PcName2 are the client names that are chosen by the client (pa
 ## Authors
 
 **Riccardo Briccola** - Project development - [Github Account](https://github.com/richibrics)
+
 **Elupsus** - Error solver
