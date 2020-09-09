@@ -47,8 +47,9 @@ In your configuration.yaml add the 'monitor-mqtt' component with all your client
 
 ```
 monitor_mqtt:
-  - client_name: PcName1
-  - client_name: PcName1
+  monitor_list:
+    - client_name: PcName1
+    - client_name: PcName2
 ```
 where PcName1 and PcName2 are the client names that are chosen by the client (passed to the client script with -n argument)
 
