@@ -73,10 +73,10 @@ inbox_information = [{'id': 'ram', 'name': 'ram_used_percentage', 'sensor_label'
 
 
 outbox_information = [{'id': 'shutdown', 'name': 'shutdown_command', 'sensor_label': 'Shutdown', 'icon': 'mdi:power'},
-                      {'id': 'reboot', 'name': 'reboot_command',
-                       'sensor_label': 'Reboot', 'icon': 'mdi:restart'},
-                      {'id': 'lock', 'name': 'lock_command',
-                       'sensor_label': 'Lock', 'icon': 'mdi:lock'}
+                      {'id': 'reboot', 'name': 'reboot_command', 'sensor_label': 'Reboot', 'icon': 'mdi:restart'},
+                      {'id': 'lock', 'name': 'lock_command', 'sensor_label': 'Lock', 'icon': 'mdi:lock'},
+					  {'id': 'sleep', 'name': 'sleep_command', 'sensor_label': 'Sleep', 'icon': 'mdi:sleep'},
+					  {'id': 'turn_off_monitors', 'name': 'turn_off_monitors_command', 'sensor_label': 'Turn Off Monitors', 'icon': 'mdi:monitor-off'},
                       ]
 
 camera_information = {'id': 'screen', 'name': 'screenshot',
