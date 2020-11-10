@@ -11,6 +11,7 @@ import voluptuous as vol
 import homeassistant.loader as loader
 from homeassistant.components.sensor import DOMAIN as SENSOR_DOMAIN
 from homeassistant.components.binary_sensor import DOMAIN as BINARY_SENSOR_DOMAIN
+from homeassistant.components.light import DOMAIN as LIGHT_DOMAIN
 from homeassistant.components.switch import DOMAIN as SWITCH_DOMAIN
 from homeassistant.components.camera import DOMAIN as CAMERA_DOMAIN
 import homeassistant.util.dt as dt_util
@@ -83,6 +84,10 @@ camera_information = {'id': 'screen', 'topic_suffix': 'screenshot',
                       'camera_label': 'Screen', 'icon':  'mdi:monitor-clean'}
 
 
+light_information = {'id': 'brightness', 'set_topic': 'brightness_set', 'get_topic': 'brightness_get',
+                     'light_label': 'Brightness','icon':  'mdi:monitor-clean'}
+
+
 async def async_setup(hass, config):
     hass.data[DOMAIN] = {'data': []}
     # index is the number of client info to find them in the hass.data list
@@ -92,7 +97,7 @@ async def async_setup(hass, config):
 
         # These hass.data will be passed to the sensors
         hass.data[DOMAIN]['data'].append({'client_name': client_name, 'topic': topic, 'inbox_information': deepcopy(inbox_information),
-                                          'outbox_information': outbox_information, 'camera_information': camera_information, 'last_message_time': None})
+                                          'outbox_information': outbox_information, 'camera_information': camera_information,'light_information':light_information, 'last_message_time': None})
 
         # Load the sensors - that receive and manage clients messages
         hass.async_create_task(
@@ -117,6 +122,13 @@ async def async_setup(hass, config):
         hass.async_create_task(
             async_load_platform(
                 hass, CAMERA_DOMAIN, DOMAIN, index,  config
+            )
+        )
+
+
+        hass.async_create_task(
+            async_load_platform(
+                hass, LIGHT_DOMAIN, DOMAIN, index,  config
             )
         )
 
