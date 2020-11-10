@@ -56,18 +56,18 @@ CONFIG_SCHEMA = vol.Schema({
 }, extra=vol.ALLOW_EXTRA)
 
 
-inbox_information = [{'id': 'ram', 'topic_suffix': 'ram_used_percentage', 'sensor_label': 'Ram used percentage', 'unity': '%', 'icon': 'mdi:memory', 'device_class': None, 'value': None},
-                     {'id': 'cpu', 'topic_suffix': 'cpu_used_percentage',
+inbox_information = [{'id': 'ram', 'topic_suffix': 'ram/physical_memory/percentage', 'sensor_label': 'Ram used percentage', 'unity': '%', 'icon': 'mdi:memory', 'device_class': None, 'value': None},
+                     {'id': 'cpu', 'topic_suffix': 'cpu/cpu_used_percentage',
                       'sensor_label': 'CPU used percentage', 'unity': '%', 'icon': 'mdi:calculator-variant', 'device_class': None, 'value': None},
                      {'id': 'disk', 'topic_suffix': 'disk_used_percentage',
                       'sensor_label': 'Disk used percentage', 'unity': '%', 'icon': 'mdi:harddisk', 'device_class': None, 'value': None},
                      {'id': 'os', 'topic_suffix': 'operating_system',
                       'sensor_label': 'Operating system', 'unity': '', 'icon': 'mdi:$OPERATING_SYSTEM', 'device_class': None, 'value': None},
-                     {'id': 'battery_level', 'topic_suffix': 'battery_level_percentage',
+                     {'id': 'battery_level', 'topic_suffix': 'battery/battery_level_percentage',
                       'sensor_label': 'Battery percentage', 'unity': '%', 'icon': 'mdi:battery', 'device_class': 'battery', 'value': None},
-                     {'id': 'battery_charging', 'topic_suffix': 'battery_charging',
+                     {'id': 'battery_charging', 'topic_suffix': 'battery/battery_charging',
                       'sensor_label': 'Battery charging', 'unity': '', 'icon': 'mdi:$PLUGGED', 'device_class': None, 'value': None},
-                     {'id': 'cpu_temperature', 'topic_suffix': 'cpu_temperature',
+                     {'id': 'cpu_temperature', 'topic_suffix': 'cpu/temperatures',
                       'sensor_label': 'CPU temperature', 'unity': '°C', 'icon': 'mdi:coolant-temperature', 'device_class': 'temperature', 'value': None},
                      {'id': 'time', 'topic_suffix': 'message_time', 'sensor_label': 'Last update time', 'unity': '', 'icon': 'mdi:clock-outline', 'device_class': None, 'value': None}]
 
