@@ -39,7 +39,7 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info)
     camera_information = hass.data[MAIN_DOMAIN]['data'][client_index]['camera_information']
     client_name = hass.data[MAIN_DOMAIN]['data'][client_index]['client_name']
 
-    camera_config = collections.OrderedDict({'topic': topic+camera_information['name'], 'platform': 'mqtt', 'payload_available': 'online',
+    camera_config = collections.OrderedDict({'topic': topic+camera_information['topic_suffix'], 'platform': 'mqtt', 'payload_available': 'online',
                                              'payload_not_available': 'offline', 'name': camera_information['camera_label'], 'qos': 0})
 
     async_add_entities(

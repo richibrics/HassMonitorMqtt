@@ -56,30 +56,30 @@ CONFIG_SCHEMA = vol.Schema({
 }, extra=vol.ALLOW_EXTRA)
 
 
-inbox_information = [{'id': 'ram', 'name': 'ram_used_percentage', 'sensor_label': 'Ram used percentage', 'unity': '%', 'icon': 'mdi:memory', 'device_class': None, 'value': None},
-                     {'id': 'cpu', 'name': 'cpu_used_percentage',
+inbox_information = [{'id': 'ram', 'topic_suffix': 'ram/physical_memory/percentage', 'sensor_label': 'Ram used percentage', 'unity': '%', 'icon': 'mdi:memory', 'device_class': None, 'value': None},
+                     {'id': 'cpu', 'topic_suffix': 'cpu/cpu_used_percentage',
                       'sensor_label': 'CPU used percentage', 'unity': '%', 'icon': 'mdi:calculator-variant', 'device_class': None, 'value': None},
-                     {'id': 'disk', 'name': 'disk_used_percentage',
+                     {'id': 'disk', 'topic_suffix': 'disk_used_percentage',
                       'sensor_label': 'Disk used percentage', 'unity': '%', 'icon': 'mdi:harddisk', 'device_class': None, 'value': None},
-                     {'id': 'os', 'name': 'operating_system',
+                     {'id': 'os', 'topic_suffix': 'operating_system',
                       'sensor_label': 'Operating system', 'unity': '', 'icon': 'mdi:$OPERATING_SYSTEM', 'device_class': None, 'value': None},
-                     {'id': 'battery_level', 'name': 'battery_level_percentage',
+                     {'id': 'battery_level', 'topic_suffix': 'battery/battery_level_percentage',
                       'sensor_label': 'Battery percentage', 'unity': '%', 'icon': 'mdi:battery', 'device_class': 'battery', 'value': None},
-                     {'id': 'battery_charging', 'name': 'battery_charging',
+                     {'id': 'battery_charging', 'topic_suffix': 'battery/battery_charging',
                       'sensor_label': 'Battery charging', 'unity': '', 'icon': 'mdi:$PLUGGED', 'device_class': None, 'value': None},
-                     {'id': 'cpu_temperature', 'name': 'cpu_temperature',
+                     {'id': 'cpu_temperature', 'topic_suffix': 'cpu/temperatures',
                       'sensor_label': 'CPU temperature', 'unity': '°C', 'icon': 'mdi:coolant-temperature', 'device_class': 'temperature', 'value': None},
-                     {'id': 'time', 'name': 'message_time', 'sensor_label': 'Last update time', 'unity': '', 'icon': 'mdi:clock-outline', 'device_class': None, 'value': None}]
+                     {'id': 'time', 'topic_suffix': 'message_time', 'sensor_label': 'Last update time', 'unity': '', 'icon': 'mdi:clock-outline', 'device_class': None, 'value': None}]
 
 
-outbox_information = [{'id': 'shutdown', 'name': 'shutdown_command', 'sensor_label': 'Shutdown', 'icon': 'mdi:power'},
-                      {'id': 'reboot', 'name': 'reboot_command', 'sensor_label': 'Reboot', 'icon': 'mdi:restart'},
-                      {'id': 'lock', 'name': 'lock_command', 'sensor_label': 'Lock', 'icon': 'mdi:lock'},
-					  {'id': 'sleep', 'name': 'sleep_command', 'sensor_label': 'Sleep', 'icon': 'mdi:sleep'},
-					  {'id': 'turn_off_monitors', 'name': 'turn_off_monitors_command', 'sensor_label': 'Turn Off Monitors', 'icon': 'mdi:monitor-off'},
-                      ]
+outbox_information = [{'id': 'shutdown', 'topic_suffix': 'shutdown_command', 'sensor_label': 'Shutdown', 'icon': 'mdi:power'},
+                      {'id': 'reboot', 'topic_suffix': 'reboot_command', 'sensor_label': 'Reboot', 'icon': 'mdi:restart'},
+                      {'id': 'lock', 'topic_suffix': 'lock_command', 'sensor_label': 'Lock', 'icon': 'mdi:lock'},
+					            {'id': 'sleep', 'topic_suffix': 'sleep_command', 'sensor_label': 'Sleep', 'icon': 'mdi:sleep'},
+					            {'id': 'turn_off_monitors', 'topic_suffix': 'turn_off_monitors_command', 'sensor_label': 'Turn Off Monitors', 'icon': 'mdi:monitor-off'},
+                     ]
 
-camera_information = {'id': 'screen', 'name': 'screenshot',
+camera_information = {'id': 'screen', 'topic_suffix': 'screenshot',
                       'camera_label': 'Screen', 'icon':  'mdi:monitor-clean'}
 
 

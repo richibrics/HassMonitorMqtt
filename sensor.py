@@ -51,7 +51,7 @@ class MqttSensor(RestoreEntity):
         self.client_index = client_index
         self.client_name = client_name
         self.inbox_info = inbox_info
-        self.topic = topic+inbox_info['name']
+        self.topic = topic+inbox_info['topic_suffix']
         self._name = client_name + ' - ' + inbox_info['sensor_label']
         self.hass = hass
         self.entity_id = MAIN_DOMAIN + '.' + client_name.lower() + '_' + \
