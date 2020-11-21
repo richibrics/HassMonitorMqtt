@@ -68,7 +68,7 @@ inbox_information = [{'id': 'ram', 'topic_suffix': 'ram/physical_memory/percenta
                      {'id': 'battery_charging', 'topic_suffix': 'battery/battery_charging',
                       'sensor_label': 'Battery charging', 'unity': '', 'icon': 'mdi:$PLUGGED', 'device_class': None, 'value': None},
                      {'id': 'cpu_temperature', 'topic_suffix': 'cpu/temperatures',
-                      'sensor_label': 'CPU temperature', 'unity': '°C', 'icon': 'mdi:coolant-temperature', 'device_class': 'temperature', 'value': None},
+                      'sensor_label': 'CPU temperature', 'unity': '°C', 'icon': 'mdi:thermometer-lines', 'device_class': 'temperature', 'value': None},
                      {'id': 'time', 'topic_suffix': 'message_time', 'sensor_label': 'Last update time', 'unity': '', 'icon': 'mdi:clock-outline', 'device_class': None, 'value': None}]
 
 
